@@ -1,4 +1,4 @@
-FROM node:20.12.2-buster-slim
+FROM node:lts-slim
 
 WORKDIR /app
 
@@ -8,7 +8,6 @@ RUN npm install
 
 COPY . .
 
-EXPOSE 3001
-EXPOSE 80
+EXPOSE 3000
 
 CMD ["npm", "run", "start"]
