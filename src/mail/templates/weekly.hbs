@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Resumen Semanal</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+            color: white;
+        }p{
+            font-size: 14px;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 600px;
+            margin: 0 auto;
+            background-color: rgb(34, 34, 34);
+            padding: 20px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        .header {
+            text-align: center;
+            padding: 10px 0;
+            background-color: rgb(196, 255, 13);
+            color: rgb(34, 34, 34);
+            border-radius: .2rem;
+        }
+        .content {
+            padding: 20px;
+        }
+        .footer {
+            text-align: center;
+            padding: 10px 0;
+            background-color: #f4f4f4;
+            color: #777777;
+            font-size: 10px;
+        }
+        .button {
+            display: inline-block;
+            padding: 10px 20px;
+            margin: 20px 0;
+            background-color: rgb(196, 255, 13);
+            color: rgb(34, 34, 34);
+            text-decoration: none;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h2>Resumen Semanal</h2>
+        </div>
+        <div class="content">
+            <h1>Hola <span style="color: rgb(196, 255, 13);">{{username}}</span></h1>
+            <p>Esperamos que hayas tenido una excelente semana. Aquí tienes un resumen de tus actividades y ofertas más relevantes:</p>
+            
+            <h2>Actividades Recientes</h2>
+            <ul>
+                    {{#each posts}}
+                    <li>{{this}}</li>
+                    {{/each}}
+            </ul>
+
+            <ul>
+                    {{#each rentals}}
+                    <li>{{this}}</li>
+                    {{/each}}
+  
+            </ul>
+
+            <h2>Ofertas Destacadas</h2>
+            <ul>
+                {{#each offers}}
+                <li>{{this}}</li>
+                {{/each}}
+            </ul>
+
+            <img src="cid:weeklyoffer" alt="Oferta de You Drive" style="max-width: 100%; border-radius: 1rem">
+            <p>No te pierdas nuestras últimas novedades y ofertas exclusivas. ¡Aprovecha y saca el máximo provecho de nuestra plataforma!</p>
+
+            <a href="Aqui iria la url" class="button">Ver Más</a>
+        </div>
+        <div class="footer">
+             <img src="cid:imagename" alt="Logo de You Drive" style="max-width: 600px">
+            <p>&copy; 2024 You Drive. Todos los derechos reservados.</p>
+        </div>
+    </div>
+</body>
+</html>
