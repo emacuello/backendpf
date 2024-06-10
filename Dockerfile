@@ -8,6 +8,7 @@ RUN npm install
 
 COPY . .
 
-EXPOSE 3000
+EXPOSE 3001
+EXPOSE 80
 
-CMD ["npm", "run", "start"]
+CMD ["node", "--max-old-space-size=4096", "node_modules/.bin/nest", "start"]
