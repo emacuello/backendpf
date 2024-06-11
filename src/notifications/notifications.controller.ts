@@ -6,14 +6,18 @@ import {
   Param,
   Delete,
   Put,
+  UseGuards,
 } from '@nestjs/common';
 import { NotificationsService } from './notifications.service';
 import { CreateNotificationDto } from './dto/create-notification.dto';
 import { UpdateNotificationDto } from './dto/update-notification.dto';
 import { ApiTags } from '@nestjs/swagger';
+import { RolesGuard } from 'src/users/utils/roles.guard';
 
 @ApiTags('NOTIFICATIONS')
 @Controller('notifications')
+@UseGuards(RolesGuard)
+// @Roles(Role.Admin)
 export class NotificationsController {
   constructor(private readonly notificationsService: NotificationsService) {}
 
@@ -51,5 +55,4 @@ export class NotificationsController {
   deleteNotification(@Param('id') id: string) {
     return this.notificationsService.deleteNotification(id);
   }
-  
 }

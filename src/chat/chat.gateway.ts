@@ -13,7 +13,7 @@ import { CreateChatDto } from './dto/create-chat.dto';
 import { Server, Socket } from 'socket.io';
 import { MessageChat } from './interfaces/usersChat.interfaces';
 
-const PORT = Number(process.env.PORT_WS) || 80;
+const PORT = Number(process.env.PORT_WS) || 3002;
 @WebSocketGateway(PORT, {
   namespace: 'chat',
   cors: '*',
