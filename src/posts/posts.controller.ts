@@ -1,23 +1,51 @@
-import { Controller, Get, Post, Body, Param, Delete, Put, ParseUUIDPipe, UploadedFiles, ParseFilePipe, MaxFileSizeValidator, FileTypeValidator, UseInterceptors, Headers, Query, UnauthorizedException, UseGuards } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Param,
+  Put,
+  ParseUUIDPipe,
+  UploadedFiles,
+  ParseFilePipe,
+  MaxFileSizeValidator,
+  FileTypeValidator,
+  UseInterceptors,
+  Headers,
+  Query,
+  UnauthorizedException,
+  Patch,
+} from '@nestjs/common';
 import { PostsService } from './posts.service';
 import { CreatePostDto } from './dto/create-post.dto';
 import { UpdatePostDto } from './dto/update-post.dto';
 import { FilesInterceptor } from '@nestjs/platform-express';
 import { FiltersPosts } from './interfaces/filter.interfaces';
-import { TokenGuard } from './guards/token.guard';
+// import { TokenGuard } from './guards/token.guard';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
-import { RolesGuard } from 'src/users/utils/roles.guard';
+// import { RolesGuard } from 'src/users/utils/roles.guard';
 import { Role } from 'src/users/utils/roles.enum';
 import { Roles } from 'src/users/utils/roles.decorator';
 // import { RolesGuard } from 'src/users/utils/roles.guard';
-
 
 @ApiTags('POSTS')
 @Controller('posts')
 // @UseGuards(RolesGuard)
 export class PostsController {
-  constructor(private readonly postsService: PostsService) { }
+  constructor(private readonly postsService: PostsService) {}
 
+  //Con paginación
+  // @Get()
+  // getPostsAllController(
+
+  //   @Query('page') page:number = 1,
+  //   @Query('limit') limit:number = 5
+  //   ) {
+  //   return this.postsService.getPostsAllServices(page,limit);
+
+  // }
+
+  //sin paginacion
   @Get()
   getPostsAllController() {
     return this.postsService.getPostsAllServices();
@@ -25,7 +53,12 @@ export class PostsController {
 
   @Get('filter')
   getPostsByFilter(@Query() filter: FiltersPosts) {
+    console.log(filter);
     return this.postsService.getPostsByFilterServices(filter);
+  }
+  @Get('available')
+  getPostsByDate() {
+    return this.postsService.getPostsByDate();
   }
 
   @Get(':id')
@@ -38,10 +71,8 @@ export class PostsController {
   // @UseGuards(TokenGuard)
   @UseInterceptors(FilesInterceptor('file', 5))
 
-
   //@UseGuards(RolesGuard)
   //@Roles(Role.User, Role.Admin)
-
   create(
     @Body() createPostDto: CreatePostDto,
     @Headers('Authorization') headers?: string,
@@ -127,10 +158,9 @@ export class PostsController {
     return this.postsService.UpdatePostsServices(id, updatePostDto, token);
   }
 
-  @Delete(':id')
-  @UseGuards(RolesGuard)
-  @Roles(Role.User, Role.Admin)
-  deletePostsByIdController(@Param('id', ParseUUIDPipe) id: string) {
-    return this.postsService.DeletePostsServices(id);
+  @Patch('soft-delete/:id')
+  @Roles(Role.SuperAdmin)
+  async softDelete(@Param('id') id: string): Promise<{ message: string }> {
+    return this.postsService.softDelete(id);
   }
 }

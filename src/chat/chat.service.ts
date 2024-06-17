@@ -25,12 +25,11 @@ export class ChatService {
   async create(payload: CreateChatDto, token: string) {
     const { room_id, message } = payload;
 
-    const newChat = this.chatRepository.create({ message });
-    newChat.room_id = room_id;
+    const newChat = this.chatRepository.create({ message, room_id });
     const postId = room_id.substring(0, 36);
     const post = await this.postsRepository.findOne({
       where: { id: postId },
-      relations: ['user', 'room_id'],
+      relations: ['user'],
     });
     if (!post) throw new NotFoundException('Publicacion no encontrada');
 
@@ -58,16 +57,6 @@ export class ChatService {
     if (!findUser) throw new NotFoundException('Usuario no encontrado');
     newChat.receiver = findUser;
     await this.chatRepository.save(newChat);
-    if (post.room_id?.length === 0) {
-      await this.postsRepository.save({ room_id: [newChat] });
-    }
-    const duplicateRoom = post.room_id.some(
-      (post) => post.room_id === newChat.room_id,
-    );
-    if (!duplicateRoom) {
-      post.room_id?.push(newChat);
-      await this.postsRepository.save(post);
-    }
     if (!newChat) throw new BadRequestException('Error al enviar el chat');
     if (newChat.image) {
       return await this.createChatWithImage(newChat);
@@ -77,8 +66,8 @@ export class ChatService {
   async createChatWithImage(newChat: Chat) {
     const messageContent: MessageChat = {
       message: newChat.message,
-      sender: newChat.sender.name,
-      receiver: newChat.receiver.name,
+      sender: newChat.sender,
+      receiver: newChat.receiver,
       room_id: newChat.room_id,
       image: newChat.image,
       date_created: newChat.date_created,
@@ -88,8 +77,8 @@ export class ChatService {
   async createChatWithoutImage(newChat: Chat) {
     const messageContent: MessageChat = {
       message: newChat.message,
-      sender: newChat.sender.name,
-      receiver: newChat.receiver.name,
+      sender: newChat.sender,
+      receiver: newChat.receiver,
       room_id: newChat.room_id,
       date_created: newChat.date_created,
     };
@@ -101,8 +90,7 @@ export class ChatService {
       where: { room_id: room_id },
       order: { date_created: 'DESC' },
     });
-    if (chatHistory === null)
-      throw new NotFoundException('Historial de chat vacio');
+
     return chatHistory;
   }
 }

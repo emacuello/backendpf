@@ -6,7 +6,6 @@ import {
 } from '@nestjs/common';
 import { CreatePostDto } from './dto/create-post.dto';
 import { UpdatePostDto } from './dto/update-post.dto';
-
 import { Posts } from './entities/post.entity';
 import { Repository } from 'typeorm';
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -17,6 +16,8 @@ import { User } from 'src/users/entities/user.entity';
 import { JwtPayload } from 'src/rentals/interfaces/payload.interfaces';
 import { JwtService } from '@nestjs/jwt';
 import { FiltersPosts } from './interfaces/filter.interfaces';
+import { Review } from 'src/reviews/entities/review.entity';
+import { Rental } from 'src/rentals/entities/rental.entity';
 
 @Injectable()
 export class PostsService {
@@ -25,6 +26,8 @@ export class PostsService {
     @InjectRepository(Car) private carRepository: Repository<Car>,
     @InjectRepository(Posts) private postRepository: Repository<Posts>,
     @InjectRepository(User) private userRepository: Repository<User>,
+    @InjectRepository(Review) private reviewRepository: Repository<Review>,
+    @InjectRepository(Rental) private rentalRepository: Repository<Rental>,
     private jwtService: JwtService,
   ) {}
 
@@ -49,6 +52,8 @@ export class PostsService {
       query.andWhere('car.year = :year', { year: filters.year });
     }
     if (filters.mileage) {
+      console.log('Entra al if?', filters);
+
       query.andWhere('car.mileage = :mileage', { mileage: filters.mileage });
     }
     if (filters.color) {
@@ -59,6 +64,7 @@ export class PostsService {
     }
 
     const posts = await query.getMany();
+    console.log(posts);
 
     if (posts.length === 0) {
       throw new NotFoundException('No se encontraron resultados');
@@ -67,23 +73,45 @@ export class PostsService {
     }
   }
 
+  //Con paginacion
+  // async getPostsAllServices(page: number, limit: number) {
+  //   let posts = await this.postRepository.find({
+  //     relations: {
+  //       user: true,
+  //       car: true,
+  //       review: true},
+  //   });
+  //   if (!posts) throw new NotFoundException('No se encontraron publicaciones');
+
+  //   const start = (page - 1) * limit;
+  //   const end = page * limit;
+  //   posts = posts.slice(start, end);
+
+  //   return posts;
+  // }
+
+  //Sin paginacion
   async getPostsAllServices() {
     const posts = await this.postRepository.find({
-      relations: ['user', 'car'],
+      relations: {
+        user: true,
+        car: true,
+        review: true,
+      },
     });
     if (!posts) throw new NotFoundException('No se encontraron publicaciones');
+
     return posts;
   }
 
   async getPostsServiceId(id: string) {
     const postsId = await this.postRepository.findOne({
       where: { id },
-      relations: ['user', 'car'],
+      relations: ['user', 'car', 'review', 'user.addresses', 'rentals'],
     });
     if (!postsId) {
       return `publicación con ${id} no encontrado`;
     }
-
     return postsId;
   }
 
@@ -93,9 +121,7 @@ export class PostsService {
     files?: Express.Multer.File[],
   ) {
     const { title, description, price, ...rest } = posts;
-
     const secret = process.env.JWT_SECRET;
-
     const payload: JwtPayload = await this.jwtService.verify(currentUser, {
       secret,
     });
@@ -112,13 +138,19 @@ export class PostsService {
     const newPosts = this.postRepository.create({ title, description, price });
 
     newPosts.car = newCar;
-
     newPosts.user = user;
 
     const postsSaved = await this.postRepository.save(newPosts);
-    if (!postsSaved)
+    if (!postsSaved) {
       throw new BadRequestException('No se pudo insertar la publicación');
-    await this.carRepository.update(newCar.id, { post: postsSaved });
+    }
+
+    if (Array.isArray(postsSaved)) {
+      throw new BadRequestException('postsSaved no es un array');
+    }
+
+    await this.postRepository.update(postsSaved.id, { car: newCar });
+
     return 'Publicación insertada';
   }
 
@@ -194,17 +226,67 @@ export class PostsService {
     return 'Publicación actualizada';
   }
 
-  async DeletePostsServices(id: string) {
-    const postsFind = await this.postRepository.findOne({ where: { id } });
-    if (!postsFind)
+  async softDelete(id: string): Promise<{ message: string }> {
+    const car = await this.carRepository.findOne({
+      where: { id },
+      relations: ['post'],
+    });
+
+    if (!car) {
       throw new NotFoundException(
-        `No se pudo obtener la publicación con ${id}`,
+        `El automóvil con ID ${id} no se ha encontrado`,
       );
+    }
 
-    const posts = await this.postRepository.delete(postsFind.id);
-    if (posts.affected === 0)
-      throw new BadRequestException('No se pudo borrar la publicación');
+    car.isDeleted = true;
+    await this.carRepository.save(car);
 
-    return 'Publicación eliminada';
+    const postsToUpdate = car.post.map((post) => ({
+      id: post.id,
+      isDeleted: true,
+    }));
+    await this.postRepository.save(postsToUpdate);
+
+    return { message: 'El automóvil ha sido borrado lógicamente con éxito' };
   }
+
+  async restoreCar(id: string): Promise<void> {
+    const car = await this.carRepository.findOne({
+      where: { id },
+      withDeleted: true,
+      relations: ['post'],
+    });
+    if (!car) {
+      throw new NotFoundException(
+        `El automóvil con ID ${id} no se ha encontrado`,
+      );
+    }
+
+    car.isDeleted = false;
+    await this.carRepository.save(car);
+
+    const postsToUpdate = car.post.map((post) => ({
+      id: post.id,
+      isDeleted: false,
+    }));
+    await this.postRepository.save(postsToUpdate);
+  }
+
+  async getPostsByDate() {
+    // const allPosts = await this.postRepository.find({
+    //   relations: ['rental'],
+    // });
+    // return allPosts;
+
+    const posts = await this.postRepository.find({
+      relations: ['car'],
+    });
+
+    const availablePosts = posts.filter((post) => {
+      return post.car.availability === true;
+    });
+
+    return availablePosts;
+  }
+  //Prueba xd
 }
