@@ -5,6 +5,7 @@ import passport from 'passport';
 import session from 'express-session';
 import './notifications/CronJobs.service';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+import {Logger} from './middleweare/logger';
 
 async function bootstrap() {
   const PORT = process.env.PORT_HTTP || 3001;
@@ -37,7 +38,7 @@ async function bootstrap() {
       },
     }),
   );
-
+  app.use(Logger)
   app.use(passport.initialize());
   app.use(passport.session());
   app.enableCors();

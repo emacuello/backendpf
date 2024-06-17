@@ -1,4 +1,4 @@
-FROM node:lts-slim
+FROM node:16
 
 WORKDIR /app
 
@@ -11,4 +11,4 @@ COPY . .
 EXPOSE 3001
 EXPOSE 80
 
-CMD ["node", "--max-old-space-size=4096", "node_modules/.bin/nest", "start"]
+CMD ["npm", "run", "start"]
