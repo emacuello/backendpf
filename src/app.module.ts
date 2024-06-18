@@ -34,7 +34,7 @@ import { SslModule } from './ssl/ssl.module';
     JwtConfigModule,
     PassportModule.register({ session: true }),
     ChatModule,
-    SslModule,
+    // SslModule,
   ],
   controllers: [],
   providers: [],
