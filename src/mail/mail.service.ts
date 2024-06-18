@@ -3,7 +3,6 @@ import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Rental } from 'src/rentals/entities/rental.entity';
 import { Repository } from 'typeorm';
-import * as path from 'path';
 
 @Injectable()
 export class MailService {
@@ -11,14 +10,7 @@ export class MailService {
     private readonly mailerservice: MailerService,
     @InjectRepository(Rental) private rentalsRepository: Repository<Rental>,
   ) {}
-
   async sendEmail(user, template: string, contractPost?: any) {
-    const logoPath = path.resolve(__dirname, '../../../public/logo.png');
-    const bestPriceFormPath = path.resolve(
-      __dirname,
-      '../../../public/bestpriceform.png',
-    );
-
     switch (template) {
       case 'welcome':
         try {
@@ -32,7 +24,7 @@ export class MailService {
             attachments: [
               {
                 filename: 'logo.png',
-                path: logoPath,
+                path: 'https://res.cloudinary.com/dkent00db/image/upload/v1718734167/logo_u94niq.png',
                 cid: 'imagename',
               },
             ],
@@ -57,7 +49,7 @@ export class MailService {
             attachments: [
               {
                 filename: 'logo.png',
-                path: logoPath,
+                path: 'https://res.cloudinary.com/dkent00db/image/upload/v1718734167/logo_u94niq.png',
                 cid: 'imagename',
               },
             ],
@@ -116,7 +108,7 @@ export class MailService {
             attachments: [
               {
                 filename: 'logo.png',
-                path: logoPath,
+                path: 'https://res.cloudinary.com/dkent00db/image/upload/v1718734167/logo_u94niq.png',
                 cid: 'imagename',
               },
             ],
@@ -169,7 +161,7 @@ export class MailService {
             attachments: [
               {
                 filename: 'logo.png',
-                path: logoPath,
+                path: 'https://res.cloudinary.com/dkent00db/image/upload/v1718734167/logo_u94niq.png',
                 cid: 'imagename',
               },
             ],
@@ -184,12 +176,6 @@ export class MailService {
       }
 
       case 'cancelTenantReservation': {
-        // To search name of tenant
-        const nameTenant = await this.rentalsRepository.find({
-          where: { posts: { id: contractPost.id } },
-          relations: { users: true },
-        });
-
         //To search totalCost
         const PRICE = user.rentals.filter((post) => ({
           priceTotal: post.totalCost,
@@ -223,7 +209,7 @@ export class MailService {
             attachments: [
               {
                 filename: 'logo.png',
-                path: logoPath,
+                path: 'https://res.cloudinary.com/dkent00db/image/upload/v1718734167/logo_u94niq.png',
                 cid: 'imagename',
               },
             ],
@@ -238,6 +224,30 @@ export class MailService {
       }
 
       case 'cancelReservation': {
+        // To search name of tenant
+        // const nameTenant = await this.rentalsRepository.find({
+        //   where: {posts: {id: contractPost.id}},
+        //   relations: {users: true},
+        // });
+
+        // //To search totalCost
+        // const PRICE = user.rentals.filter((post) => ({
+        //   priceTotal: post.totalCost,
+        // }));
+        // const price = PRICE[PRICE.length - 1].totalCost;
+
+        // //To search for first day of rent
+        // const rentalsStart = user.rentals.filter((post) => ({
+        //   rentalStartDate: post.rentalStartDate,
+        // }));
+        // const RENTALStart = rentalsStart[rentalsStart.length - 1].rentalStartDate;
+
+        // //To search for last day of rent
+        // const datePayEnd = user.rentals.filter((post) => ({
+        //   rentalEndDate: post.rentalEndDate,
+        // }));
+        // const DatePayend = datePayEnd[datePayEnd.length - 1].rentalEndDate;
+
         try {
           await this.mailerservice.sendMail({
             to: user.email,
@@ -245,11 +255,14 @@ export class MailService {
             template: 'cancelTenantReservation',
             context: {
               name: user.name,
+              // prices: price,
+              // newRentalsStart: RENTALStart,
+              // newRentalsEnd: DatePayend,
             },
             attachments: [
               {
                 filename: 'logo.png',
-                path: logoPath,
+                path: 'https://res.cloudinary.com/dkent00db/image/upload/v1718734167/logo_u94niq.png',
                 cid: 'imagename',
               },
             ],
@@ -292,7 +305,7 @@ export class MailService {
             attachments: [
               {
                 filename: 'logo.png',
-                path: logoPath,
+                path: 'https://res.cloudinary.com/dkent00db/image/upload/v1718734167/logo_u94niq.png',
                 cid: 'imagename',
               },
             ],
@@ -339,12 +352,44 @@ export class MailService {
             attachments: [
               {
                 filename: 'logo.png',
-                path: logoPath,
+                path: 'https://res.cloudinary.com/dkent00db/image/upload/v1718734167/logo_u94niq.png',
                 cid: 'imagename',
               },
               {
                 filename: 'offer.png',
-                path: bestPriceFormPath,
+                path: 'https://res.cloudinary.com/dkent00db/image/upload/v1718734167/bestpriceform_ocsnkq.png',
+                cid: 'weeklyoffer',
+              },
+            ],
+          });
+          return { message: 'Correo enviado exitosamente' };
+        } catch (error) {
+          console.error(error);
+          throw new BadRequestException(
+            'El correo no pudo ser enviado exitosamente',
+          );
+        }
+
+      case 'newChat':
+        try {
+          await this.mailerservice.sendMail({
+            to: user.email,
+            subject: 'You Drive. Alquila Autos Facilmente',
+            template: 'newChat',
+            context: {
+              username: user.name,
+              posts: posts,
+              rentals: rentals,
+            },
+            attachments: [
+              {
+                filename: 'logo.png',
+                path: 'https://res.cloudinary.com/dkent00db/image/upload/v1718734167/logo_u94niq.png',
+                cid: 'imagename',
+              },
+              {
+                filename: 'offer.png',
+                path: 'https://res.cloudinary.com/dkent00db/image/upload/v1718734167/bestpriceform_ocsnkq.png',
                 cid: 'weeklyoffer',
               },
             ],
@@ -357,5 +402,11 @@ export class MailService {
           );
         }
     }
+  }
+
+  async newChat(sender, receiver, template: string) {
+    console.log('Este es el sender', sender);
+    console.log('Este es el receiver', receiver);
+    console.log('Este es el template', template);
   }
 }

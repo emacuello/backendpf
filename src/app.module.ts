@@ -15,7 +15,7 @@ import { AuthModule } from './auth/auth.module';
 import { JwtConfigModule } from './config/jwt.module';
 import { PassportModule } from '@nestjs/passport';
 import { ChatModule } from './chat/chat.module';
-import { SslModule } from './ssl/ssl.module';
+import { searchModule } from './search/search.module';
 
 @Module({
   imports: [
@@ -34,7 +34,7 @@ import { SslModule } from './ssl/ssl.module';
     JwtConfigModule,
     PassportModule.register({ session: true }),
     ChatModule,
-    // SslModule,
+    searchModule,
   ],
   controllers: [],
   providers: [],
