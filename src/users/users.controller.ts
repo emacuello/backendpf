@@ -46,8 +46,8 @@ export class UsersController {
   }
   @ApiBearerAuth()
   @Get('dashboard')
-  @Roles(Role.User, Role.Admin, Role.SuperAdmin)
-  @UseGuards(RolesGuard)
+  // @Roles(Role.User, Role.Admin, Role.SuperAdmin)
+  // @UseGuards(RolesGuard)
   getUserForDashboard(@Headers('Authorization') token: string) {
     return this.usersService.getUserForDashboard(token);
   }
