@@ -25,7 +25,7 @@ import { Roles } from './utils/roles.decorator';
 
 @ApiTags('USERS')
 @Controller('users')
-// @UseGuards(RolesGuard)
+@UseGuards(RolesGuard)
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
@@ -46,8 +46,7 @@ export class UsersController {
   }
   @ApiBearerAuth()
   @Get('dashboard')
-  // @Roles(Role.User, Role.Admin, Role.SuperAdmin)
-  // @UseGuards(RolesGuard)
+  @Roles(Role.User, Role.Admin, Role.SuperAdmin)
   getUserForDashboard(@Headers('Authorization') token: string) {
     return this.usersService.getUserForDashboard(token);
   }
