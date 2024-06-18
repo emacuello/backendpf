@@ -12,8 +12,8 @@ const configDatabase = {
   password: process.env.DB_PASSWORD,
   entities: ['dist/**/*.entity{.ts,.js}'],
   synchronize: true,
-  logging: true,
-  dropSchema: true,
+  //logging: true,
+  // dropSchema: true,
   migrations: ['dist/migrations/*.{ts,js}'],
 };
 
