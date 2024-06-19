@@ -1,6 +1,7 @@
 import { MailerService } from '@nestjs-modules/mailer';
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { Notification } from 'src/notifications/entities/notification.entity';
 import { Rental } from 'src/rentals/entities/rental.entity';
 import { Repository } from 'typeorm';
 
@@ -9,6 +10,8 @@ export class MailService {
   constructor(
     private readonly mailerservice: MailerService,
     @InjectRepository(Rental) private rentalsRepository: Repository<Rental>,
+    @InjectRepository(Notification)
+    private notificationsRepository: Repository<Notification>,
   ) {}
   async sendEmail(user, template: string, contractPost?: any) {
     switch (template) {
@@ -123,11 +126,6 @@ export class MailService {
       }
 
       case 'cancelOwnerReservation': {
-        // arrendatario : $ {{owner}} <br>
-        // Monto pagado : $ {{price}} <br>
-        // Alquiler desde :  {{newRentalsStart}}  <br>
-        // Alquiler hasta :  {{newRentalsEnd}}    <br>
-
         //To search totalCost
         const PRICE = user.rentals.filter((post) => ({
           priceTotal: post.totalCost,
@@ -176,6 +174,11 @@ export class MailService {
       }
 
       case 'cancelTenantReservation': {
+        // To search name of tenant
+        const nameTenant = await this.rentalsRepository.find({
+          where: { posts: { id: contractPost.id } },
+          relations: { users: true },
+        });
         //To search totalCost
         const PRICE = user.rentals.filter((post) => ({
           priceTotal: post.totalCost,
@@ -224,40 +227,13 @@ export class MailService {
       }
 
       case 'cancelReservation': {
-        // To search name of tenant
-        // const nameTenant = await this.rentalsRepository.find({
-        //   where: {posts: {id: contractPost.id}},
-        //   relations: {users: true},
-        // });
-
-        // //To search totalCost
-        // const PRICE = user.rentals.filter((post) => ({
-        //   priceTotal: post.totalCost,
-        // }));
-        // const price = PRICE[PRICE.length - 1].totalCost;
-
-        // //To search for first day of rent
-        // const rentalsStart = user.rentals.filter((post) => ({
-        //   rentalStartDate: post.rentalStartDate,
-        // }));
-        // const RENTALStart = rentalsStart[rentalsStart.length - 1].rentalStartDate;
-
-        // //To search for last day of rent
-        // const datePayEnd = user.rentals.filter((post) => ({
-        //   rentalEndDate: post.rentalEndDate,
-        // }));
-        // const DatePayend = datePayEnd[datePayEnd.length - 1].rentalEndDate;
-
         try {
           await this.mailerservice.sendMail({
             to: user.email,
             subject: 'You Drive. Alquila Autos Facilmente',
-            template: 'cancelTenantReservation',
+            template: 'cancelReservation',
             context: {
               name: user.name,
-              // prices: price,
-              // newRentalsStart: RENTALStart,
-              // newRentalsEnd: DatePayend,
             },
             attachments: [
               {
@@ -404,9 +380,109 @@ export class MailService {
     }
   }
 
-  async newChat(sender, receiver, template: string) {
-    console.log('Este es el sender', sender);
-    console.log('Este es el receiver', receiver);
-    console.log('Este es el template', template);
+  async newChat(sender, receiver) {
+    console.log('este es el sender', sender);
+    console.log('este es el receiver', receiver);
+
+    function encontrarNotificacionMasReciente(notifications, templateMessage) {
+      // Filtrar las notificaciones por el tipo deseado
+      const notificacionesFiltradas = notifications.filter(
+        (notification) => notification.template_message === templateMessage,
+      );
+
+      // Si no hay notificaciones de ese tipo, regresar null
+      if (notificacionesFiltradas.length === 0) {
+        return null;
+      }
+
+      // Encontrar la notificación más reciente
+      return notificacionesFiltradas.reduce(
+        (notificacionMasReciente, currentNotification) => {
+          return new Date(currentNotification.createdAt) >
+            new Date(notificacionMasReciente.createdAt)
+            ? currentNotification
+            : notificacionMasReciente;
+        },
+      );
+    }
+
+    if (receiver.notifications) {
+      const found = encontrarNotificacionMasReciente(
+        receiver.notifications,
+        'newChat',
+      );
+
+      if (!found) {
+        try {
+          await this.mailerservice.sendMail({
+            to: receiver.email,
+            subject: 'You Drive. Alquila Autos Facilmente',
+            template: 'newChat',
+            context: {
+              receiver: receiver.name,
+              sender: sender.name,
+            },
+            attachments: [
+              {
+                filename: 'logo.png',
+                path: 'https://res.cloudinary.com/dkent00db/image/upload/v1718734167/logo_u94niq.png',
+                cid: 'imagename',
+              },
+            ],
+          });
+
+          const notification = this.notificationsRepository.create({
+            template_message: 'newChat',
+          });
+
+          notification.user = receiver;
+
+          await this.notificationsRepository.save(notification);
+
+          return { message: 'Correo enviado exitosamente' };
+        } catch (error) {
+          console.error(error);
+          throw new BadRequestException(
+            'El correo no pudo ser enviado exitosamente',
+          );
+        }
+      } else {
+        return { message: 'Notificación ya enviada' };
+      }
+    } else {
+      try {
+        await this.mailerservice.sendMail({
+          to: receiver.email,
+          subject: 'You Drive. Alquila Autos Facilmente',
+          template: 'newChat',
+          context: {
+            receiver: receiver.name,
+            sender: sender.name,
+          },
+          attachments: [
+            {
+              filename: 'logo.png',
+              path: 'https://res.cloudinary.com/dkent00db/image/upload/v1718734167/logo_u94niq.png',
+              cid: 'imagename',
+            },
+          ],
+        });
+
+        const notification = this.notificationsRepository.create({
+          template_message: 'newChat',
+        });
+
+        notification.user = receiver;
+
+        await this.notificationsRepository.save(notification);
+
+        return { message: 'Correo enviado exitosamente' };
+      } catch (error) {
+        console.error(error);
+        throw new BadRequestException(
+          'El correo no pudo ser enviado exitosamente',
+        );
+      }
+    }
   }
 }

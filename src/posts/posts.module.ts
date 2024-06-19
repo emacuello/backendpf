@@ -13,9 +13,24 @@ import { JwtService } from '@nestjs/jwt';
 import { UsersModule } from 'src/users/users.module';
 import { Review } from 'src/reviews/entities/review.entity';
 import { Rental } from 'src/rentals/entities/rental.entity';
+import { NotificationsService } from 'src/notifications/notifications.service';
+import { MailService } from 'src/mail/mail.service';
+import { Notification } from 'src/notifications/entities/notification.entity';
+import { Address } from 'src/addresses/entities/address.entity';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Posts, Car, User,Review,Rental]), UsersModule],
+  imports: [
+    TypeOrmModule.forFeature([
+      Posts,
+      Car,
+      User,
+      Review,
+      Rental,
+      Notification,
+      Address,
+    ]),
+    UsersModule,
+  ],
   controllers: [PostsController],
   providers: [
     PostsService,
@@ -23,6 +38,8 @@ import { Rental } from 'src/rentals/entities/rental.entity';
     FileUploadService,
     CloudinaryConfig,
     JwtService,
+    NotificationsService,
+    MailService,
   ],
 })
 export class PostsModule {}

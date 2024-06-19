@@ -46,12 +46,12 @@ export class AuthController {
   @Get('google/redirect')
   @UseGuards(GoogleAuthGuard)
   async handleRedirect(@Req() req: Request, @Res() res: Response) {
-    const LOGIN = process.env.LOGIN_URL;
-    const GOOGLE_REDIRECT_FRONT = process.env.GOOGLE_REDIRECT_FRONT;
     const { token, payload } = req.user;
+    const LOGIN_URL = process.env.LOGIN_URL;
+    const GOOGLE_REDIRECT_FRONT = process.env.GOOGLE_REDIRECT_FRONT;
     const createUser = await this.authService.validateUser(payload);
     if (!createUser) {
-      res.redirect(`${LOGIN}`);
+      res.redirect(`${LOGIN_URL}`);
       return { msg: 'Error al crear el usuario' };
     }
     res.redirect(`${GOOGLE_REDIRECT_FRONT}?token=${token}`);

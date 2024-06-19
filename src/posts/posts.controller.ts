@@ -15,6 +15,7 @@ import {
   Query,
   UnauthorizedException,
   Patch,
+  UseGuards,
 } from '@nestjs/common';
 import { PostsService } from './posts.service';
 import { CreatePostDto } from './dto/create-post.dto';
@@ -26,6 +27,7 @@ import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 // import { RolesGuard } from 'src/users/utils/roles.guard';
 import { Role } from 'src/users/utils/roles.enum';
 import { Roles } from 'src/users/utils/roles.decorator';
+import { RolesGuard } from 'src/users/utils/roles.guard';
 // import { RolesGuard } from 'src/users/utils/roles.guard';
 
 @ApiTags('POSTS')
@@ -57,8 +59,8 @@ export class PostsController {
     return this.postsService.getPostsByFilterServices(filter);
   }
   @Get('available')
-  getPostsByDate() {
-    return this.postsService.getPostsByDate();
+  getPostsByDate(@Query('location') location: string) {
+    return this.postsService.getPostsByDate(location);
   }
 
   @Get(':id')
@@ -109,6 +111,12 @@ export class PostsController {
     return this.postsService.AddPostsServices(createPostDto, token);
   }
 
+  @Post('cancel/:id')
+  async cancelReservation(@Param('id') id: string) {
+    const cancelPost = await this.postsService.cancel(id);
+    return cancelPost;
+  }
+
   @ApiBearerAuth()
   @Put(':id')
   @UseInterceptors(FilesInterceptor('file', 5))
@@ -122,7 +130,7 @@ export class PostsController {
       new ParseFilePipe({
         validators: [
           new MaxFileSizeValidator({
-            maxSize: 5000000, // 5MB
+            maxSize: 5000000, // 5MBa
             message: 'Uno de los archivos es demasiado grande',
           }),
           new FileTypeValidator({
