@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Constancia de Pago</title>
+    <title>Renta Cancelada</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -54,28 +54,30 @@
 <body>
     <div class="container">
         <div class="header">
-            <h2>Constancia de Operación de Pago</h2>
+            <h2>Renta Cancelada</h2>
         </div>
         <div class="content">
-            <h1>Hola <span style="color: rgb(196, 255, 13) ;">{{username}}</span></h1>
+            <h1>Estimado/a <span style="color: rgb(196, 255, 13) ;">{{owner}}.</span></h1>
 
-            <p style="font-weight: bold; font-style: italic">Realizaste un pago de <span style="color: rgb(196, 255, 13) ;">$ {{price}}</span> por el servicio que brinda YouDrive.</p>
+            <p>Esperamos que este mensaje le encuentre bien. Lamentamos informarle que la reserva realizada para su vehículo ha sido cancelada por el usuario que habia solicitado el alquiler.</p><br>
 
-            <p style="font-weight: bold; font-style: italic">Por tu seguridad, te enviamos los datos de tu operación.</p><br>
+            <h2>Detalles de la reserva cancelada:</h2>
+            <p>Tu publicación: 
+                <ul>
+                    <li>
+                        <span style="font-weight: bold; color: rgb(196, 255, 13)">{{post}}</span><br>
+                        <span>{{description}}</span>
+                    </li>
+                </ul>
+                Ha sido cancelada por el usuario <span style="font-weight: bold; color: rgb(196, 255, 13)">{{renter}}</span>
+            </p>
 
-            <p style="font-weight: bold; font-style: italic">Datos de la operación<br>
-                Monto pagado : $ {{price}} <br>
-                Operación realizada : Alquiler de vehículos <br>
-                Fecha y hora :    {{newDayPay}} <br>
-                Tipo de pago : otro     <br>
-                Alquiler desde :  {{newRentalsStart}}  <br>
-                Alquiler hasta :  {{newRentalsEnd}}    <br>
-                Canal : Página web      <br>
-                Serie de operación: {{newNumOperation}}<br>
+            <p>El vehiculo había sido rentado del día {{rentalStart}} hasta el {{rentalEnd}} por un precio de <span style="font-weight: bold; color: rgb(196, 255, 13)">${{prices}}</span>.</p><br>
 
-            <p style="font-weight: bold; font-style: italic"><span style="color: rgb(196, 255, 13) ;">¿No reconeces esta operación?</span><br>
-                Comunicate inmediatamente con nosotros al (01) 354-1830 para ayudarte a verificarla.</p>
+            <p>Queremos asegurarle que su vehículo estará disponible nuevamente para otros usuarios y haremos todo lo posible para ayudarle a encontrar un nuevo inquilino lo antes posible.</p>
 
+            <p>Agradecemos su comprensión.</p><br>
+            
             <p style="font-weight: bold; font-style: italic">Atentamente, <br> El equipo de YouDrive</p>
 
             <a href="Aqui iria la url" class="button">You Drive</a>
