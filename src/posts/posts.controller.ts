@@ -55,6 +55,8 @@ export class PostsController {
 
   @Post()
   @UseInterceptors(FilesInterceptor('file', 5))
+  @Roles(Role.Admin, Role.SuperAdmin)
+  @UseGuards(RolesGuard)
   create(
     @Body() createPostDto: CreatePostDto,
     @Headers('Authorization') headers?: string,
@@ -144,6 +146,7 @@ export class PostsController {
 
   @Patch('soft-delete/:id')
   @Roles(Role.SuperAdmin)
+  @UseGuards(RolesGuard)
   async softDelete(@Param('id') id: string): Promise<{ message: string }> {
     return this.postsService.softDelete(id);
   }

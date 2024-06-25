@@ -1,4 +1,20 @@
-import { Controller, Get, Body, Param, Delete, Put, ParseUUIDPipe, UseInterceptors, ParseFilePipe, MaxFileSizeValidator, FileTypeValidator, Headers,  UploadedFile, UseGuards, Patch } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Body,
+  Param,
+  Delete,
+  Put,
+  ParseUUIDPipe,
+  UseInterceptors,
+  ParseFilePipe,
+  MaxFileSizeValidator,
+  FileTypeValidator,
+  Headers,
+  UploadedFile,
+  UseGuards,
+  Patch,
+} from '@nestjs/common';
 import { UsersService } from './users.service';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
@@ -15,8 +31,8 @@ export class UsersController {
 
   @ApiBearerAuth()
   @Get()
-  // @Roles(Role.Admin, Role.SuperAdmin)
-  // @UseGuards(RolesGuard)
+  @Roles(Role.Admin, Role.SuperAdmin)
+  @UseGuards(RolesGuard)
   findAll() {
     return this.usersService.findAll();
   }
@@ -45,8 +61,8 @@ export class UsersController {
   }
 
   @Get(':id')
-  // @Roles(Role.Admin, Role.SuperAdmin)
-  // @UseGuards(RolesGuard)
+  @Roles(Role.Admin, Role.SuperAdmin)
+  @UseGuards(RolesGuard)
   findOne(@Param('id', ParseUUIDPipe) id: string) {
     return this.usersService.findOne(id);
   }
@@ -62,7 +78,10 @@ export class UsersController {
     @UploadedFile(
       new ParseFilePipe({
         validators: [
-          new MaxFileSizeValidator({  maxSize: 1000000, message: 'El archivo es demasiado grande' }),
+          new MaxFileSizeValidator({
+            maxSize: 1000000,
+            message: 'El archivo es demasiado grande',
+          }),
           new FileTypeValidator({ fileType: /(jpg|jpeg|png|webp)$/ }),
         ],
         fileIsRequired: false,
@@ -73,10 +92,21 @@ export class UsersController {
     const { city, address, country, state, zip_code, ...rest2 } = updateUserDto;
 
     if (!file)
-      return this.usersService.update(token, rest2, { city, address, country, state, zip_code });
-    return this.usersService.update( token, rest2, { city, address, country, state, zip_code }, file );
+      return this.usersService.update(token, rest2, {
+        city,
+        address,
+        country,
+        state,
+        zip_code,
+      });
+    return this.usersService.update(
+      token,
+      rest2,
+      { city, address, country, state, zip_code },
+      file,
+    );
   }
-  
+
   @ApiBearerAuth()
   @Put(':id')
   @Roles(Role.Admin, Role.SuperAdmin)
@@ -103,8 +133,19 @@ export class UsersController {
     const { city, address, country, state, zip_code, ...rest2 } = updateUserDto;
 
     if (!file)
-      return this.usersService.putByID(id, rest2, { city, address, country, state, zip_code });
-    return this.usersService.putByID( id, rest2, { city, address, country, state, zip_code }, file );
+      return this.usersService.putByID(id, rest2, {
+        city,
+        address,
+        country,
+        state,
+        zip_code,
+      });
+    return this.usersService.putByID(
+      id,
+      rest2,
+      { city, address, country, state, zip_code },
+      file,
+    );
   }
 
   @Delete(':id')
