@@ -1,5 +1,6 @@
 import {
   BadRequestException,
+  ForbiddenException,
   Injectable,
   NotFoundException,
   UnauthorizedException,
@@ -195,7 +196,8 @@ export class PostsService {
 
     if (!findPosts)
       throw new NotFoundException(`No se encontro publicación con ${id}`);
-
+    if (user.id !== findPosts.user.id)
+      throw new ForbiddenException('No autorizado');
     const car = await this.carRepository.findOneBy({ id: findPosts.car.id });
     if (!car) throw new NotFoundException('Auto no encontrado');
     if (files?.length === 0 || !files) {
