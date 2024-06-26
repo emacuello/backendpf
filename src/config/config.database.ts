@@ -11,11 +11,11 @@ const configDatabase = {
   username: process.env.DB_USERNAME,
   password: process.env.DB_PASSWORD,
   entities: ['dist/**/*.entity{.ts,.js}'],
-  // synchronize: true,
+  synchronize: true,
   logging: true,
   // dropSchema: true,
   migrations: ['dist/migrations/*.{ts,js}'],
-  // ssl: true,
+  ssl: true,
 };
 
 export default registerAs('database', () => configDatabase);

@@ -27,27 +27,27 @@ export class FileUploadService {
     userId?: string,
     carId?: string,
   ): Promise<UploadApiResponse> {
-    if (userId && carId) {
-      const verify = await this.analyzeImage(file.buffer);
-      if (!verify) {
-        await this.bannedUsers(userId, carId);
-        throw new NotAcceptableException(
-          'La imagen no cumple con nuestro estandares, nuestro validador no acepta la imagen, tus puntos estan bajando, cuando tus puntos sean insuficientes, tu cuenta sera baneada',
-        );
-      }
-    }
-    const containsExplicitContent = await this.moderationFile(file.buffer);
-    if (containsExplicitContent) {
-      if (userId && carId) {
-        await this.bannedUsers(carId, userId);
-      }
-      if (userId && !carId) {
-        await this.bannedUsers(userId);
-      }
-      throw new NotAcceptableException(
-        'La imagen no cumple con nuestros terminos de uso, nuestro validador no acepta la imagen, tus puntos estan bajando, cuando tus puntos sean insuficientes, tu cuenta sera baneada',
-      );
-    }
+    // if (userId && carId) {
+    //   const verify = await this.analyzeImage(file.buffer);
+    //   if (!verify) {
+    //     await this.bannedUsers(userId, carId);
+    //     throw new NotAcceptableException(
+    //       'La imagen no cumple con nuestro estandares, nuestro validador no acepta la imagen, tus puntos estan bajando, cuando tus puntos sean insuficientes, tu cuenta sera baneada',
+    //     );
+    //   }
+    // }
+    // const containsExplicitContent = await this.moderationFile(file.buffer);
+    // if (containsExplicitContent) {
+    //   if (userId && carId) {
+    //     await this.bannedUsers(carId, userId);
+    //   }
+    //   if (userId && !carId) {
+    //     await this.bannedUsers(userId);
+    //   }
+    //   throw new NotAcceptableException(
+    //     'La imagen no cumple con nuestros terminos de uso, nuestro validador no acepta la imagen, tus puntos estan bajando, cuando tus puntos sean insuficientes, tu cuenta sera baneada',
+    //   );
+    // }
     return new Promise((resolve, reject) => {
       const upload = v2.uploader.upload_stream(
         { resource_type: 'auto' },
