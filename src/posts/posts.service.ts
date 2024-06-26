@@ -119,7 +119,7 @@ export class PostsService {
 
     if (!payload) throw new UnauthorizedException('token invalido 3');
     const user = await this.userRepository.findOne({
-      where: { email: payload.sub },
+      where: { email: payload.sub, isDeleted: false },
     });
 
     if (!user) throw new NotFoundException('Usuario no encontrado');
@@ -184,7 +184,7 @@ export class PostsService {
     const payload: JwtPayload = await this.jwtService.verify(token, { secret });
     if (!payload) throw new UnauthorizedException('token invalido 3');
     const user = await this.userRepository.findOne({
-      where: { email: payload.sub },
+      where: { email: payload.sub, isDeleted: false },
     });
     if (!user) throw new NotFoundException('Usuario no encontrado');
 
