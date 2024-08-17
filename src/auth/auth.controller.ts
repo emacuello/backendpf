@@ -59,9 +59,6 @@ export class AuthController {
 
   @Get('status')
   user(@Req() request: Request) {
-    console.log(request.session, 'sesion in status');
-
-    console.log(request.user);
     if (request.user) {
       return { msg: 'Authenticated' };
     } else {

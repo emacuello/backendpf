@@ -112,8 +112,8 @@ export class ReviewsService {
     const findReview = await this.reviewService.findOneBy({ id });
     if (!findReview) throw new NotFoundException('Reseña no encontrado');
 
-    const update = await this.reviewService.update(id, updateReview);
-    console.log(update);
+    await this.reviewService.update(id, updateReview);
+
     return 'Reseña actualizada';
   }
 

@@ -195,7 +195,7 @@ export class RentalsService {
 
   async payment(dataPayment: Payment, id: string) {
     const stripe = new Stripe(process.env.STRIPE_PRIVATE_KEY);
-    console.log(stripe);
+
     const INTERNAL_API_SUCESS = process.env.INTERNAL_API_SUCESS;
     const INTERNAL_API_CANCEL = process.env.INTERNAL_API_CANCEL;
     const session = await stripe.checkout.sessions.create({
@@ -229,7 +229,7 @@ export class RentalsService {
 
   async paymentSucess(id: string) {
     const contractID = await this.createRental(id);
-    console.log(contractID);
+
     if (!contractID) throw new NotFoundException('El contrato no fue creado');
     const contract = await this.rentalRepository.findOne({
       where: { id: contractID },

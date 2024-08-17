@@ -37,7 +37,6 @@ export class RentalsController {
     @Res() res: Response,
   ) {
     const currentUser = authorization?.split(' ')[1];
-    console.log(createRentalDto);
 
     if (!currentUser)
       throw new UnauthorizedException('No hay un usuario autenticado');

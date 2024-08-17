@@ -77,13 +77,7 @@ export class AuthService {
     newUser.addresses = [newAdress];
     await this.userRepository.save(newUser);
 
-    const newAddress = await this.addressesService.addressWithGeolocation(
-      newUser.id,
-      { ...rest },
-    );
-
-    console.log(newAddress);
-
+    await this.addressesService.addressWithGeolocation(newUser.id, { ...rest });
     // ENVIO DE EMAIL!
     await this.notificationService.newNotification(email, 'welcome');
     return { message: 'Usuario registrado con exito!' };
@@ -119,13 +113,11 @@ export class AuthService {
     return true;
   }
   async findUser(id: string) {
-    console.log(id);
-
     const user = await this.userRepository
       .createQueryBuilder('user')
       .where('user.id = :id', { id })
       .getOne();
-    console.log(user);
+
     return user;
   }
 }

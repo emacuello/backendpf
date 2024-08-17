@@ -168,7 +168,6 @@ export class UsersService {
       reviews: rest.reviews,
       rentals: filterRentals,
     };
-    console.log(returnUser);
 
     return returnUser;
   }
@@ -179,11 +178,6 @@ export class UsersService {
     updateAdress?: UpdateAddressDto,
     file?: Express.Multer.File,
   ) {
-    console.log(token);
-
-    console.log(updateUserDto);
-    console.log(updateAdress);
-
     const { password, ...rest } = updateUserDto;
 
     const currentUser = token?.split(' ')[1];
@@ -198,8 +192,6 @@ export class UsersService {
       where: { email: payload.sub, isDeleted: false },
       relations: ['addresses'],
     });
-
-    console.log(user);
 
     if (!user) throw new NotFoundException('Usuario no encontrado');
 

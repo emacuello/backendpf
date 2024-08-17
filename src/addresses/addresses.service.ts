@@ -81,8 +81,6 @@ export class AddressesService {
 
     const fullAddress = `${address}, ${city}, ${state}, ${country}`;
 
-    console.log(fullAddress);
-
     const { latitude, longitude } =
       await this.geolocation.getCordinates(fullAddress);
 

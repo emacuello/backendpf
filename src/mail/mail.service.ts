@@ -136,12 +136,6 @@ export class MailService {
         }));
         const price = PRICE[PRICE.length - 1].totalCost;
 
-        // console.log('Contrato como llega:', contractPost);
-
-        // console.log('rental:', rental);
-
-        // console.log('Este es el owner', user.name);
-
         try {
           await this.mailerservice.sendMail({
             to: user.email,

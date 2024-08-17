@@ -186,7 +186,7 @@ export class FileUploadService {
 
     const response = await rekognition.send(new DetectLabelsCommand(params));
     if (!response) return false;
-    console.log('asda1', response);
+
     const { Labels } = response;
 
     const cars = Labels.some((label) => {
@@ -210,11 +210,9 @@ export class FileUploadService {
     const response = await rekognition.send(
       new DetectModerationLabelsCommand(params),
     );
-    console.log('response moderation', response);
 
     if (!response) return false;
     const { ModerationLabels } = response;
-    console.log('moderationlabvels response', ModerationLabels);
 
     return ModerationLabels.some((label) => label.Confidence > 75);
   }

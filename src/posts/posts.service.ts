@@ -59,7 +59,6 @@ export class PostsService {
     }
 
     if (filters.mileage) {
-      console.log('Entra al if?', filters);
       query.andWhere('car.mileage = :mileage', { mileage: filters.mileage });
     }
 
@@ -72,7 +71,6 @@ export class PostsService {
     }
 
     const posts = await query.getMany();
-    console.log(posts);
 
     if (posts.length === 0) {
       throw new NotFoundException('No se encontraron resultados');
@@ -115,8 +113,6 @@ export class PostsService {
     const payload: JwtPayload = await this.jwtService.verify(currentUser, {
       secret,
     });
-
-    console.log(payload);
 
     if (!payload) throw new UnauthorizedException('token invalido 3');
     const user = await this.userRepository.findOne({
@@ -179,7 +175,6 @@ export class PostsService {
     files?: Express.Multer.File[],
   ) {
     const { title, description, price, image_url, ...rest } = posts;
-    console.log(id, 'ID EN SERVICE');
 
     const secret = process.env.JWT_SECRET;
     const payload: JwtPayload = await this.jwtService.verify(token, { secret });
@@ -193,7 +188,6 @@ export class PostsService {
       where: { id },
       relations: ['car', 'user'],
     });
-    console.log(findPosts, 'FIND POSTS EN SERVICE');
 
     if (!findPosts)
       throw new NotFoundException(`No se encontro publicación con ${id}`);

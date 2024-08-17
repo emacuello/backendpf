@@ -35,14 +35,12 @@ export class PostsController {
   constructor(private readonly postsService: PostsService) {}
 
   @Get()
-  getPostsAllController(@Headers() headers: any) {
-    console.log(headers);
+  getPostsAllController() {
     return this.postsService.getPostsAllServices();
   }
 
   @Get('filter')
   getPostsByFilter(@Query() filter: FiltersPosts) {
-    console.log(filter);
     return this.postsService.getPostsByFilterServices(filter);
   }
   @Get('available')
@@ -53,7 +51,6 @@ export class PostsController {
   @Get(':id')
   @UseGuards(CustomHeaderGuard)
   getPostsByIdController(@Param('id') id: string) {
-    console.log(id);
     return this.postsService.getPostsServiceId(id);
   }
 
@@ -79,8 +76,6 @@ export class PostsController {
     )
     files?: Express.Multer.File[],
   ) {
-    console.log(headers);
-
     if (!headers) {
       throw new UnauthorizedException('token invalido 1');
     }
@@ -88,7 +83,6 @@ export class PostsController {
     if (!token) {
       throw new UnauthorizedException('token invalido 2');
     }
-    console.log(files);
 
     if (files?.length !== 0 || files) {
       return this.postsService.AddPostsServices(createPostDto, token, files);
@@ -144,7 +138,7 @@ export class PostsController {
         files,
       );
     }
-    console.log(updatePostDto);
+
     return this.postsService.UpdatePostsServices(id, updatePostDto, token);
   }
 
