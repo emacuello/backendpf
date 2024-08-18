@@ -13,6 +13,37 @@ sudo docker-compose up -d nginx
 
 sleep 15
 
+
+function check_domain {
+  local domain=$1
+  local url="http://$domain/.well-known/acme-challenge/testfile"
+  
+  echo "Verificando dominio $domain..."
+  
+  
+  sudo mkdir -p /var/www/certbot/.well-known/acme-challenge
+  echo "test" | sudo tee /var/www/certbot/.well-known/acme-challenge/testfile > /dev/null
+
+  
+  response=$(curl -s -o /dev/null -w "%{http_code}" $url)
+  
+  if [ "$response" -ne 200 ]; then
+    echo "El dominio $domain no es accesible. Código de respuesta: $response"
+    return 1
+  else
+    echo "El dominio $domain es accesible."
+    return 0
+  fi
+}
+
+# Verificar todos los dominios
+for domain in "${domains[@]}"; do
+  while ! check_domain $domain; do
+    echo "Esperando a que el dominio $domain esté disponible..."
+    sleep 30
+  done
+done
+
 staging_arg=""
 if [ $staging -ne 0 ]; then
   staging_arg="--staging"
