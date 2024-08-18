@@ -6,7 +6,8 @@ data_path="./nginx/ssl"
 email="ema.cuello1010@gmail.com" 
 staging=0
 
-sudo mv /home/ubuntu/backendpf/nginx.conf.temp /home/ubuntu/backendpf/nginx/nginx.conf
+sudo cp /home/ubuntu/backendpf/nginx.conf /home/ubuntu/backendpf/nginx/nginx.conf
+sudo cp /home/ubuntu/backendpf/youdrive.conf.temp /home/ubuntu/backendpf/nginx/conf.d/youdrive.conf
 
 sudo docker-compose up -d nginx
 
@@ -36,13 +37,17 @@ for domain in "${domains[@]}"; do
   domain_args="$domain_args -d $domain"
 done
 
+sleep 15
+
 docker-compose run --rm --entrypoint "
   sh -c 'mkdir -p /etc/letsencrypt/www/.well-known/acme-challenge &&
   certbot certonly --webroot -w /etc/letsencrypt/www --email $email --agree-tos --no-eff-email $staging_arg --rsa-key-size $rsa_key_size $domain_args'" certbot
 
 echo "Configuración de SSL completada"
 
-sudo mv /home/ubuntu/backendpf/nginx.conf /home/ubuntu/backendpf/nginx/nginx.conf
+sudo cp /home/ubuntu/backendpf/nginx.conf /home/ubuntu/backendpf/nginx/nginx.conf
+sudo cp /home/ubuntu/backendpf/youdrive.conf /home/ubuntu/backendpf/nginx/conf.d/youdrive.conf
+sudo cp /home/ubuntu/backendpf/grafana.conf /home/ubuntu/backendpf/nginx/conf.d/grafana.conf
 
 sleep 1
 

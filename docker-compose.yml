@@ -5,7 +5,9 @@ services:
       - 80:80
       - 443:443
     volumes:
-      - ./nginx/nginx.conf:/etc/nginx/conf.d/nginx.conf
+      - ./nginx/conf.d/youdrive.conf:/etc/nginx/conf.d/youdrive.conf
+      - ./nginx/conf.d/grafana.conf:/etc/nginx/conf.d/grafana.conf
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf
       - ./nginx/ssl:/etc/nginx/ssl
       - ./nginx/www:/usr/share/nginx/html/.well-known/acme-challenge
     networks:

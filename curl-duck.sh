@@ -43,6 +43,6 @@ sleep 2
 response2=$(curl -v -s "$URL2")
 echo "Respuesta 2: $response2"
 
-sleep 15
+sleep 30
 
 echo "Curl completado"
