@@ -8,6 +8,10 @@ resource "aws_instance" "youdrive-api" {
               
               sudo apt-get install -y apt-transport-https ca-certificates curl software-properties-common git
               
+              sudo apt install nginx -y
+              sudo systemctl enable nginx 
+              sudo systemctl start nginx 
+              
               curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
               
               sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"

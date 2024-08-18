@@ -1,15 +1,28 @@
 #!/bin/bash
 
+sudo mkdir -p /etc/nginx/conf.d
+sudo mkdir -p /etc/nginx/www
+sudo chown -R 1000:1000 ./nginx/www || true
+sudo chmod -R 755 ./nginx/www
+
+sudo cp /home/ubuntu/backendpf/nginx.conf /etc/nginx/nginx.conf
+sudo cp /home/ubuntu/backendpf/youdrive.conf.temp /etc/nginx/conf.d/youdrive.conf
+
+sudo nginx -t
+
+if [ $? -eq 0 ]; then
+    sudo systemctl restart nginx
+    sudo systemctl reload nginx
+else
+    echo "La verificación de la configuración de NGINX falló. Revisa el archivo de configuración."
+    exit 1
+fi
+
 domains=(youdrive-api.duckdns.org youdrive-grafana.duckdns.org)
 rsa_key_size=4096
-data_path="./nginx/ssl"
+data_path="/etc/nginx/ssl"
 email="ema.cuello1010@gmail.com" 
 staging=0
-
-sudo cp /home/ubuntu/backendpf/nginx.conf /home/ubuntu/backendpf/nginx/nginx.conf
-sudo cp /home/ubuntu/backendpf/youdrive.conf.temp /home/ubuntu/backendpf/nginx/conf.d/youdrive.conf
-
-sudo docker-compose up -d nginx
 
 sleep 15
 
@@ -36,7 +49,7 @@ function check_domain {
   fi
 }
 
-# Verificar todos los dominios
+
 for domain in "${domains[@]}"; do
   while ! check_domain $domain; do
     echo "Esperando a que el dominio $domain esté disponible..."
@@ -76,16 +89,19 @@ docker-compose run --rm --entrypoint "
 
 echo "Configuración de SSL completada"
 
-sudo cp /home/ubuntu/backendpf/nginx.conf /home/ubuntu/backendpf/nginx/nginx.conf
-sudo cp /home/ubuntu/backendpf/youdrive.conf /home/ubuntu/backendpf/nginx/conf.d/youdrive.conf
-sudo cp /home/ubuntu/backendpf/grafana.conf /home/ubuntu/backendpf/nginx/conf.d/grafana.conf
+sudo cp /home/ubuntu/backendpf/nginx.conf /etc/nginx/nginx.conf
+sudo cp /home/ubuntu/backendpf/youdrive.conf /etc/nginx/conf.d/youdrive.conf
+sudo cp /home/ubuntu/backendpf/grafana.conf /etc/nginx/conf.d/grafana.conf
 
-sleep 1
+sudo nginx -t
+if [ $? -eq 0 ]; then
+    sudo systemctl restart nginx
+    sudo systemctl reload nginx
+else
+    echo "La verificación de la configuración de NGINX falló. Revisa el archivo de configuración."
+    exit 1
+fi
 
-sudo docker-compose restart nginx
-
-echo "Reiniciando nginx"
-
-sleep 2
+sleep 5
 
 sudo docker-compose up -d

@@ -1,39 +1,61 @@
 services:
-  nginx:
-    image: nginx:1.15.12-alpine
-    ports:
-      - 80:80
-      - 443:443
-    volumes:
-      - ./nginx/conf.d/youdrive.conf:/etc/nginx/conf.d/youdrive.conf
-      - ./nginx/conf.d/grafana.conf:/etc/nginx/conf.d/grafana.conf
-      - ./nginx/nginx.conf:/etc/nginx/nginx.conf
-      - ./nginx/ssl:/etc/nginx/ssl
-      - ./nginx/www:/usr/share/nginx/html/.well-known/acme-challenge
-    networks:
-      - youdrive
-    restart: always    
+  # nginx:
+  #   image: nginx:1.15.12-alpine
+  #   ports:
+  #     - 80:80
+  #     - 443:443
+  #   volumes:
+  #     - ./nginx/conf.d/youdrive.conf:/etc/nginx/conf.d/youdrive.conf
+  #     - ./nginx/conf.d/grafana.conf:/etc/nginx/conf.d/grafana.conf
+  #     - ./nginx/nginx.conf:/etc/nginx/nginx.conf
+  #     - ./nginx/ssl:/etc/nginx/ssl
+  #     - ./nginx/www:/usr/share/nginx/html/.well-known/acme-challenge
+  #   networks:
+  #     - youdrive
+  #   restart: always
+  # nginx-proxy:
+  #   image: jwilder/nginx-proxy
+  #   ports:
+  #     - "80:80"
+  #     - "443:443"
+  #   volumes:
+  #     - /var/run/docker.sock:/tmp/docker.sock:ro
+
+
+  # letsencrypt:
+  #   image: nginxproxy/acme-companion
+  #   ports:
+  #     - "80:80"
+  #     - "443:443"
+  #   volumes:
+  #     - /var/run/docker.sock:/var/run/docker.sock:ro
+  #     - ./nginx/conf.d/youdrive.conf:/etc/nginx/conf.d/youdrive.conf
+  #     - ./nginx/conf.d/grafana.conf:/etc/nginx/conf.d/grafana.conf
 
   certbot:
     image: certbot/certbot
     container_name: certbot
     volumes:
       - ./nginx/ssl:/etc/letsencrypt
-      - ./nginx/www:/usr/share/nginx/html/.well-known/acme-challenge
+      - ./nginx/www:/var/www/certbot
     entrypoint: "/bin/sh -c 'trap exit TERM; while :; do certbot renew; sleep 12h & wait $${!}; done;'"
     networks:
       - youdrive
 
   youdrive-api:
     image: emacuello/youdrive:latest
-    expose:
-      - 3001
-      - 3002
+    ports:
+      - 3001:3001
+      - 3002:3002
     networks:
       - youdrive
     restart: always
     env_file:
       - ./.env.development
+    # environment:
+    #   - VIRTUAL_HOST=youdrive.ema.cuello.team
+    #   - LETSENCRYPT_HOST=
+    #   - LETSENCRYPT_EMAIL=ema.cuello1010@gmail.com
 
   grafana:
     image: grafana/grafana:latest
