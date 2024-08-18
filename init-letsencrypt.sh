@@ -28,9 +28,14 @@ for domain in "${domains[@]}"; do
   mkdir -p "$data_path/conf/live/$domain"
 done
 
+domain_args=""
+for domain in "${domains[@]}"; do
+  domain_args="$domain_args -d $domain"
+done
+
 docker-compose run --rm --entrypoint "
   sh -c 'mkdir -p /etc/letsencrypt/www/.well-known/acme-challenge &&
-  certbot certonly --webroot -w /etc/letsencrypt/www --email $email --agree-tos --no-eff-email $staging_arg --rsa-key-size $rsa_key_size -d ${domains[*]}'" certbot
+  certbot certonly --webroot -w /etc/letsencrypt/www --email $email --agree-tos --no-eff-email $staging_arg --rsa-key-size $rsa_key_size $domain_args'" certbot
 
 echo "Configuración de SSL completada"
 
