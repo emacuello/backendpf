@@ -15,27 +15,33 @@ if [ -z "$DUCKDNS_TOKEN" ]; then
   exit 1
 fi
 
-
 IP=$(curl -s http://ifconfig.me)
+IP=$(echo "$IP" | tr -d '[:space:]')
+DUCKDNS_TOKEN=$(echo "$DUCKDNS_TOKEN" | tr -d '[:space:]')
 
 sleep 1
 
-echo $IP
-echo $DUCKDNS_TOKEN
+echo "IP: $IP"
+echo "DUCKDNS_TOKEN: $DUCKDNS_TOKEN"
 
-curl -s "https://www.duckdns.org/update?domains=youdrive-api.duckdns.org&token=$DUCKDNS_TOKEN&ip=$IP"
+echo "IP: $IP"
+echo "DUCKDNS_TOKEN: $DUCKDNS_TOKEN"
 
-response1=$(curl -s "https://www.duckdns.org/update?domains=youdrive-api.duckdns.org&token=$DUCKDNS_TOKEN&ip=$IP")
+URL1="https://www.duckdns.org/update?domains=youdrive-api.duckdns.org&token=$DUCKDNS_TOKEN&ip=$IP"
+URL2="https://www.duckdns.org/update?domains=youdrive-grafana.duckdns.org&token=$DUCKDNS_TOKEN&ip=$IP"
 
-echo $response1
+
+echo "URL1: $URL1"
+echo "URL2: $URL2"
+
+
+response1=$(curl -v -s "$URL1")
+echo "Respuesta 1: $response1"
 
 sleep 2
 
-curl -s "https://www.duckdns.org/update?domains=youdrive-grafana.duckdns.org&token=$DUCKDNS_TOKEN&ip=$IP"
-
-response=$(curl -s "https://www.duckdns.org/update?domains=youdrive-grafana.duckdns.org&token=$DUCKDNS_TOKEN&ip=$IP")
-
-echo $response
+response2=$(curl -v -s "$URL2")
+echo "Respuesta 2: $response2"
 
 sleep 15
 
