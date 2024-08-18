@@ -98,7 +98,7 @@ if [ $? -eq 0 ]; then
     sudo systemctl restart nginx
     sudo systemctl reload nginx
 else
-    echo "La verificación de la configuración de NGINX falló. Revisa el archivo de configuración."
+    echo "La verificación de la configuración de NGINX falló. Revisa el archivo de configuración 2."
     exit 1
 fi
 
