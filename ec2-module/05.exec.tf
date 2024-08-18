@@ -17,20 +17,23 @@ resource "null_resource" "wait_for_user_data" {
 
 resource "null_resource" "copy_file" {
   provisioner "local-exec" {
-    environment = {
-      DUCKDNS_TOKEN = "${var.duckdns_token}"
-    }
-    command = "scp -i ${var.sv_name}.key -o StrictHostKeyChecking=no .env.prod ubuntu@${aws_instance.youdrive-api.public_ip}:/home/ubuntu"
+
+    command = <<EOT
+      scp -i ${var.sv_name}.key -o StrictHostKeyChecking=no .env.prod ubuntu@${aws_instance.youdrive-api.public_ip}:/home/ubuntu &&
+      scp -i ${var.sv_name}.key -o StrictHostKeyChecking=no duckdns.env ubuntu@${aws_instance.youdrive-api.public_ip}:/home/ubuntu
+      EOT
   }
 
   provisioner "remote-exec" {
     inline = [
       "sudo mv /home/ubuntu/.env.prod /home/ubuntu/backendpf/.env.development",
+      "sudo mv /home/ubuntu/duckdns.env /home/ubuntu/backendpf/duckdns.env",
       "sudo chown ubuntu:ubuntu /home/ubuntu/backendpf/.env.development",
+      "sudo chown ubuntu:ubuntu /home/ubuntu/backendpf/duckdns.env",
       "sudo chmod 644 /home/ubuntu/backendpf/.env.development",
+      "sudo chmod 644 /home/ubuntu/backendpf/duckdns.env",
       "cd /home/ubuntu/backendpf",
       "sudo chmod 644 docker-compose.yml",
-      "export DUCKDNS_TOKEN=${var.duckdns_token}",
       "sudo chown -R ubuntu:ubuntu /home/ubuntu/backendpf",
       "sudo /home/ubuntu/backendpf/init-letsencrypt.sh"
     ]

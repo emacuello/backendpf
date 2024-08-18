@@ -13,7 +13,6 @@ module "ec2-module" {
   aws_ami           = var.aws_ami
   aws_instance_type = var.aws_instance_type
   sv_name           = var.sv_name
-  duckdns_token     = var.duckdns_token
 }
 
 # module "render-module" {
