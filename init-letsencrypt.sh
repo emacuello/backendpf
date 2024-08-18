@@ -1,7 +1,5 @@
 #!/bin/bash
 
-
-
 domains=(youdrive-api.duckdns.org youdrive-grafana.duckdns.org)
 rsa_key_size=4096
 data_path="./nginx/ssl"
@@ -10,7 +8,7 @@ staging=0
 
 sudo mv /home/ubuntu/backendpf/nginx.conf.temp /home/ubuntu/backendpf/nginx/nginx.conf
 
-docker-compose up -d nginx
+sudo docker-compose up -d nginx
 
 sleep 15
 
@@ -44,10 +42,11 @@ docker-compose run --rm --entrypoint "
 
 echo "Configuración de SSL completada"
 
-sudo mv /home/ubuntu/backendpf/nginx/nginx.conf /home/ubuntu/backendpf/nginx.conf.temp
 sudo mv /home/ubuntu/backendpf/nginx.conf /home/ubuntu/backendpf/nginx/nginx.conf
 
-docker-compose restart nginx
+sleep 1
+
+sudo docker-compose restart nginx
 
 echo "Reiniciando nginx"
 

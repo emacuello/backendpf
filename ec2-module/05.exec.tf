@@ -32,11 +32,11 @@ resource "null_resource" "copy_file" {
       "sudo chmod 644 /home/ubuntu/backendpf/.env.development",
       "sudo chmod 644 /home/ubuntu/backendpf/duckdns.env",
       "cd /home/ubuntu/backendpf",
+      "sudo chmod +x /home/ubuntu/backendpf/curl-duck.sh",
       "sudo chmod 644 docker-compose.yml",
       "sudo chown -R ubuntu:ubuntu /home/ubuntu/backendpf",
-      "curl -s https://www.duckdns.org/update?domains=youdrive-api.duckdns.org&token=${var.duckdns_token}&ip=${aws_instance.youdrive-api.public_ip}",
-      "curl -s https://www.duckdns.org/update?domains=youdrive-grafana.duckdns.org&token=${var.duckdns_token}&ip=${aws_instance.youdrive-api.public_ip}",
-      "sleep 15",
+      "sudo /home/ubuntu/backendpf/curl-duck.sh",
+      "sleep 5",
       "sudo /home/ubuntu/backendpf/init-letsencrypt.sh"
     ]
 

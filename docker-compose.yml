@@ -10,9 +10,7 @@ services:
       - ./nginx/www:/usr/share/nginx/html/.well-known/acme-challenge
     networks:
       - youdrive
-    restart: always
-    depends_on:
-      - youdrive-api
+    restart: always    
 
   certbot:
     image: certbot/certbot
