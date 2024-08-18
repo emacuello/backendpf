@@ -1,10 +1,5 @@
 #!/bin/bash
 
-sudo mkdir -p /etc/nginx/conf.d
-sudo mkdir -p /etc/nginx/www
-sudo chown -R 1000:1000 ./nginx/www || true
-sudo chmod -R 755 ./nginx/www
-
 sudo cp /home/ubuntu/backendpf/nginx.conf /etc/nginx/nginx.conf
 sudo cp /home/ubuntu/backendpf/youdrive.conf.temp /etc/nginx/conf.d/youdrive.conf
 

@@ -12,6 +12,11 @@ resource "aws_instance" "youdrive-api" {
               sudo systemctl enable nginx 
               sudo systemctl start nginx 
               
+              sudo mkdir -p /etc/nginx/conf.d
+              sudo mkdir -p /etc/nginx/www
+              sudo chown -R 1000:1000 ./nginx/www || true
+              sudo chmod -R 755 ./nginx/www
+
               curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
               
               sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"

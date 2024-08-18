@@ -37,7 +37,7 @@ resource "null_resource" "copy_file" {
       "sudo chown -R ubuntu:ubuntu /home/ubuntu/backendpf",
       "sudo /home/ubuntu/backendpf/curl-duck.sh",
       "sleep 5",
-      "sudo /home/ubuntu/backendpf/init-letsencrypt.sh"
+      # "sudo /home/ubuntu/backendpf/init-letsencrypt.sh"
     ]
 
 
