@@ -5,7 +5,9 @@ resource "render_web_service" "web" {
 
   runtime_source = {
     docker = {
-      image = "emacuello/youdrive:latest"
+      image    = "emacuello/youdrive:latest"
+      repo_url = "https://github.com/emacuello/backendpf"
+      branch   = "main"
     }
   }
   secret_files = {

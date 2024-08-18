@@ -1,6 +1,6 @@
 terraform {
   backend "s3" {
-    bucket = "your-bucket-name"
+    bucket = "terraform-emacuello-tfstate"
     key    = "youdrive/terraform.tfstate"
     region = "us-east-2"
   }
@@ -15,12 +15,13 @@ module "ec2-module" {
   sv_name           = var.sv_name
 }
 
-module "render-module" {
-  source = "./render-module"
+# module "render-module" {
+#   source = "./render-module"
 
-  RENDER_API_KEY   = var.RENDER_API_KEY
-  env_file_content = file(var.env_file_content)
-}
+#   RENDER_API_KEY   = var.RENDER_API_KEY
+#   RENDER_OWNER_ID  = var.RENDER_OWNER_ID
+#   env_file_content = file(var.env_file_content)
+# }
 
 output "ec2-module-public-ip" {
   description = "Ip publica del servidor"

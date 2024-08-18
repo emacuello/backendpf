@@ -1,0 +1,74 @@
+services:
+  nginx:
+    build:
+      context: ./nginx
+      dockerfile: Dockerfile.nginx
+    ports:
+      - 80:80
+      - 443:443
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/conf.d/nginx.conf
+      - ./nginx/ssl:/etc/nginx/ssl
+      - ./nginx/www:/usr/share/nginx/www
+    networks:
+      - youdrive
+    restart: always
+    depends_on:
+      - youdrive-api
+
+  certbot:
+    image: certbot/certbot
+    container_name: certbot
+    volumes:
+      - ./nginx/ssl:/etc/letsencrypt
+      - ./nginx/www:/usr/share/nginx/html
+    entrypoint: "/bin/sh -c 'trap exit TERM; while :; do certbot renew; sleep 12h & wait $${!}; done;'"
+
+  youdrive-api:
+    image: emacuello/youdrive:latest
+    expose:
+      - 3001
+      - 3002
+    networks:
+      - youdrive
+    restart: always
+    env_file:
+      - ./.env.development
+
+  grafana:
+    image: grafana/grafana:latest
+    volumes:      
+      - grafana_data:/var/lib/grafana
+      - ./grafana.ini:/etc/grafana/grafana.ini
+    networks:
+      - youdrive
+    ports:
+      - "3000:3000"
+
+  loki:
+    image: grafana/loki:2.9.2
+    ports:
+      - "3100:3100"
+    volumes:
+      - ./loki-config.yml:/etc/loki/config.yaml
+    depends_on:
+      - youdrive-api
+    networks:
+      - youdrive
+
+  promtail:
+    image: grafana/promtail:2.7.1
+    volumes:
+      - /var/log:/var/log
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ./promtail-config.yml:/etc/promtail/config.yml
+    depends_on:
+      - loki
+    networks:
+      - youdrive
+
+networks:
+  youdrive:
+    driver: bridge
+volumes:
+  grafana_data:

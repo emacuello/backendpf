@@ -32,3 +32,8 @@ variable "bucket_name" {
   description = "Bucket name"
   type        = string
 }
+
+variable "RENDER_OWNER_ID" {
+  description = "The owner ID for Render"
+  type        = string
+}

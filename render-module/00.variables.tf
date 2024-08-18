@@ -8,3 +8,7 @@ variable "env_file_content" {
   type        = string
 }
 
+variable "RENDER_OWNER_ID" {
+  description = "The owner ID for Render"
+  type        = string
+}
