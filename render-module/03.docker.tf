@@ -1,6 +1,6 @@
 resource "render_web_service" "web" {
   name   = "terraform-web-service"
-  plan   = "free"
+  plan   = "standard"
   region = "oregon"
 
   runtime_source = {
