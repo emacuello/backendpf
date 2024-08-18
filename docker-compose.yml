@@ -1,8 +1,6 @@
 services:
   nginx:
-    build:
-      context: ./nginx
-      dockerfile: Dockerfile.nginx
+    image: nginx:1.15.12-alpine
     ports:
       - 80:80
       - 443:443

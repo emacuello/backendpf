@@ -8,6 +8,11 @@ data_path="./nginx/ssl"
 email="ema.cuello1010@gmail.com" 
 staging=0
 
+mv nginx.conf.temp home/backendpf/nginx/nginx.conf
+
+docker-compose up -d nginx
+
+sleep 15
 
 staging_arg=""
 if [ $staging -ne 0 ]; then
@@ -39,6 +44,13 @@ docker-compose run --rm --entrypoint "
 
 echo "Configuración de SSL completada"
 
-sleep 3
+mv home/backendpf/nginx/nginx.conf home/backendpf/nginx.conf.temp
+mv nginx.conf home/backendpf/nginx/nginx.conf
+
+docker-compose restart nginx
+
+echo "Reiniciando nginx"
+
+sleep 2
 
 sudo docker-compose up -d
