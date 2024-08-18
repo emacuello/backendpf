@@ -4,7 +4,7 @@ cd /home/ubuntu/backendpf
 
 
 if [ -f "/home/ubuntu/backendpf/duckdns.env" ]; then
-  export $(grep -v '^#' /home/ubuntu/duckdns.env | xargs)
+  export $(grep -v '^#' /home/ubuntu/backendpf/duckdns.env | xargs)
 else
   echo "El archivo duckdns.env no se encuentra en /home/ubuntu."
   exit 1
