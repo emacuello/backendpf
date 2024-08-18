@@ -33,8 +33,7 @@ resource "aws_instance" "youdrive-api" {
               docker --version
               docker-compose --version
               git --version
-
-              ./init-letsencrypt.sh              
+          
               touch /home/ubuntu/user_data_complete
               EOF
   key_name               = aws_key_pair.youdrive-api-ssh.key_name

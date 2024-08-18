@@ -27,7 +27,8 @@ resource "null_resource" "copy_file" {
       "sudo chmod 644 /home/ubuntu/backendpf/.env.development",
       "cd /home/ubuntu/backendpf",
       "sudo chmod 644 docker-compose.yml",
-      "sudo docker-compose up -d"
+      "sudo chown -R ubuntu:ubuntu /home/ubuntu/backendpf",
+      "sudo docker-compose build"
     ]
 
 

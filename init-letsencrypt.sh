@@ -25,3 +25,7 @@ docker-compose run --rm --entrypoint "
   certbot certonly --webroot -w /etc/letsencrypt/www --email $email --agree-tos --no-eff-email $staging_arg --rsa-key-size $rsa_key_size -d ${domains[*]}'" certbot
 
 echo "Configuración de SSL completada"
+
+sleep 5
+
+sudo docker-compose up -d
