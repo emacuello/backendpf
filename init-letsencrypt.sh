@@ -13,18 +13,18 @@ if [ -z "$DUCKDNS_TOKEN" ]; then
   exit 1
 fi
 
+IP=$(curl -s http://ifconfig.me)
+echo $IP
+
+curl -s "https://www.duckdns.org/update?domains=youdrive-api.duckdns.org&token=${DUCKDNS_TOKEN}&ip=${IP}"
+curl -s "https://www.duckdns.org/update?domains=youdrive-grafana.duckdns.org&token=${DUCKDNS_TOKEN}&ip=${IP}"
+
 domains=(youdrive-api.duckdns.org youdrive-grafana.duckdns.org)
 rsa_key_size=4096
 data_path="./nginx/ssl"
 email="ema.cuello1010@gmail.com" 
 staging=0
 
-for domain in "${domains[@]}"; do
-  subdomain=$(echo $domain | cut -d. -f1)
-  curl "https://www.duckdns.org/update?domains=$subdomain&token=$DUCKDNS_TOKEN"
-done
-
-# Actualizando ip
 sleep 15
 
 staging_arg=""
