@@ -1,13 +1,7 @@
-resource "null_resource" "copy_file" {
-  provisioner "local-exec" {
-    command = "scp -i ${var.sv_name}.key -o StrictHostKeyChecking=no ./env.prod ubuntu@${aws_instance.youdrive-api.public_ip}:/home/ubuntu"
-  }
-
+resource "null_resource" "wait_for_user_data" {
   provisioner "remote-exec" {
     inline = [
-      "sudo mv /home/ubuntu/env.prod /home/ubuntu/backendpf/.env.development",
-      "sudo chown root:root /desired/path/on/server/file",
-      "sudo chmod 644 /desired/path/on/server/file"
+      "while [ ! -f /home/ubuntu/user_data_complete ]; do echo 'esperando a que se complete el script de inicializacion de la maquina...'; sleep 10; done"
     ]
 
     connection {
@@ -19,4 +13,31 @@ resource "null_resource" "copy_file" {
   }
 
   depends_on = [aws_instance.youdrive-api]
+}
+
+resource "null_resource" "copy_file" {
+  provisioner "local-exec" {
+    command = "scp -i ${var.sv_name}.key -o StrictHostKeyChecking=no .env.prod ubuntu@${aws_instance.youdrive-api.public_ip}:/home/ubuntu"
+  }
+
+  provisioner "remote-exec" {
+    inline = [
+      "sudo mv /home/ubuntu/.env.prod /home/ubuntu/backendpf/.env.development",
+      "sudo chown ubuntu:ubuntu /home/ubuntu/backendpf/.env.development",
+      "sudo chmod 644 /home/ubuntu/backendpf/.env.development",
+      "cd /home/ubuntu/backendpf",
+      "sudo chmod 644 docker-compose.yml",
+      "sudo docker-compose up -d"
+    ]
+
+
+    connection {
+      type        = "ssh"
+      user        = "ubuntu"
+      private_key = file("${var.sv_name}.key")
+      host        = aws_instance.youdrive-api.public_ip
+    }
+  }
+
+  depends_on = [null_resource.wait_for_user_data]
 }

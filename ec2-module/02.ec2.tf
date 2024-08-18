@@ -26,11 +26,16 @@ resource "aws_instance" "youdrive-api" {
               
               sudo systemctl enable docker
               sudo systemctl start docker
-
+              cd /home/ubuntu
               git clone https://github.com/emacuello/backendpf.git
               cd backendpf
               sudo chmod +x ./init-letsencrypt.sh
+              docker --version
+              docker-compose --version
+              git --version
+
               ./init-letsencrypt.sh              
+              touch /home/ubuntu/user_data_complete
               EOF
   key_name               = aws_key_pair.youdrive-api-ssh.key_name
   vpc_security_group_ids = [aws_security_group.youdrive-api-sg.id]
