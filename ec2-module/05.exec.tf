@@ -18,10 +18,7 @@ resource "null_resource" "wait_for_user_data" {
 resource "null_resource" "copy_file" {
   provisioner "local-exec" {
 
-    command = <<EOT
-      scp -i ${var.sv_name}.key -o StrictHostKeyChecking=no .env.prod ubuntu@${aws_instance.youdrive-api.public_ip}:/home/ubuntu &&
-      scp -i ${var.sv_name}.key -o StrictHostKeyChecking=no duckdns.env ubuntu@${aws_instance.youdrive-api.public_ip}:/home/ubuntu
-      EOT
+    command = "scp -i ${var.sv_name}.key -o StrictHostKeyChecking=no .env.prod ubuntu@${aws_instance.youdrive-api.public_ip}:/home/ubuntu && scp -i ${var.sv_name}.key -o StrictHostKeyChecking=no duckdns.env ubuntu@${aws_instance.youdrive-api.public_ip}:/home/ubuntu"
   }
 
   provisioner "remote-exec" {
