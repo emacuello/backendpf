@@ -7,7 +7,7 @@ services:
     volumes:
       - ./nginx/nginx.conf:/etc/nginx/conf.d/nginx.conf
       - ./nginx/ssl:/etc/nginx/ssl
-      - ./nginx/www:/usr/share/nginx/www
+      - ./nginx/www:/usr/share/nginx/html/.well-known/acme-challenge
     networks:
       - youdrive
     restart: always
@@ -19,7 +19,7 @@ services:
     container_name: certbot
     volumes:
       - ./nginx/ssl:/etc/letsencrypt
-      - ./nginx/www:/usr/share/nginx/html
+      - ./nginx/www:/usr/share/nginx/html/.well-known/acme-challenge
     entrypoint: "/bin/sh -c 'trap exit TERM; while :; do certbot renew; sleep 12h & wait $${!}; done;'"
 
   youdrive-api:
