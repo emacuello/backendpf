@@ -17,7 +17,9 @@ resource "null_resource" "wait_for_user_data" {
 
 resource "null_resource" "copy_file" {
   provisioner "local-exec" {
-
+    environment = {
+      duckdns_token = var.duckdns_token
+    }
     command = "scp -i ${var.sv_name}.key -o StrictHostKeyChecking=no .env.prod ubuntu@${aws_instance.youdrive-api.public_ip}:/home/ubuntu && scp -i ${var.sv_name}.key -o StrictHostKeyChecking=no duckdns.env ubuntu@${aws_instance.youdrive-api.public_ip}:/home/ubuntu"
   }
 
@@ -32,6 +34,9 @@ resource "null_resource" "copy_file" {
       "cd /home/ubuntu/backendpf",
       "sudo chmod 644 docker-compose.yml",
       "sudo chown -R ubuntu:ubuntu /home/ubuntu/backendpf",
+      "curl -s https://www.duckdns.org/update?domains=youdrive-api.duckdns.org&token=${var.duckdns_token}&ip=${aws_instance.youdrive-api.public_ip}",
+      "curl -s https://www.duckdns.org/update?domains=youdrive-grafana.duckdns.org&token=${var.duckdns_token}&ip=${aws_instance.youdrive-api.public_ip}",
+      "sleep 15",
       "sudo /home/ubuntu/backendpf/init-letsencrypt.sh"
     ]
 

@@ -18,3 +18,6 @@ variable "sv_name" {
   default     = "youdrive-api"
 }
 
+variable "duckdns_token" {
+  description = "Token de duckdns"
+}

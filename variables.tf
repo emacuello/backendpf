@@ -38,3 +38,7 @@ variable "RENDER_OWNER_ID" {
   type        = string
 }
 
+variable "duckdns_token" {
+  description = "Token de duckdns"
+  type        = string
+}
