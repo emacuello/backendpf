@@ -17,6 +17,9 @@ resource "null_resource" "wait_for_user_data" {
 
 resource "null_resource" "copy_file" {
   provisioner "local-exec" {
+    environment = {
+      DUCKDNS_TOKEN = "${var.duckdns_token}"
+    }
     command = "scp -i ${var.sv_name}.key -o StrictHostKeyChecking=no .env.prod ubuntu@${aws_instance.youdrive-api.public_ip}:/home/ubuntu"
   }
 
@@ -27,8 +30,9 @@ resource "null_resource" "copy_file" {
       "sudo chmod 644 /home/ubuntu/backendpf/.env.development",
       "cd /home/ubuntu/backendpf",
       "sudo chmod 644 docker-compose.yml",
+      "export DUCKDNS_TOKEN=${var.duckdns_token}",
       "sudo chown -R ubuntu:ubuntu /home/ubuntu/backendpf",
-      "sudo docker-compose build"
+      "sudo /home/ubuntu/backendpf/init-letsencrypt.sh"
     ]
 
 

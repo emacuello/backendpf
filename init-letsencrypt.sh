@@ -6,6 +6,26 @@ data_path="./nginx/ssl"
 email="ema.cuello1010@gmail.com" 
 staging=0
 
+duckdns_token="${DUCKDNS_TOKEN}"
+
+if [ -z "$duckdns_token" ]; then
+  echo "El token de DuckDNS no está definido."
+  exit 1
+fi
+
+for domain in "${domains[@]}"; do
+  subdomain=$(echo $domain | cut -d. -f1)
+  curl "https://www.duckdns.org/update?domains=$subdomain&token=$duckdns_token"
+done
+
+# Actualizando ip
+sleep 15
+
+staging_arg=""
+if [ $staging -ne 0 ]; then
+  staging_arg="--staging"
+fi
+
 if [ -d "$data_path" ]; then
   echo "El directorio $data_path ya existe. Borrando los datos anteriores..."
   sudo rm -rf "$data_path"
@@ -26,6 +46,6 @@ docker-compose run --rm --entrypoint "
 
 echo "Configuración de SSL completada"
 
-sleep 5
+sleep 3
 
 sudo docker-compose up -d
