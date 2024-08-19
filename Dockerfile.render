@@ -1,0 +1,32 @@
+FROM node:20.12.2-buster-slim AS builder
+
+WORKDIR /app
+
+COPY package*.json ./
+
+RUN npm install
+
+COPY . .
+
+RUN npm run build
+
+FROM node:20.12.2-buster-slim AS runner
+
+RUN apt-get update && \
+    apt-get install -y nginx && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
+
+COPY youdrive-api.conf /etc/nginx/conf.d/youdrive.conf
+
+WORKDIR /app
+
+COPY --from=builder /app/package*.json ./
+
+COPY --from=builder /app/dist ./dist
+
+COPY --from=builder /app/node_modules ./node_modules
+
+EXPOSE 80
+
+CMD ["sh", "-c", "npm run start:prod & nginx -g 'daemon off;'"]
