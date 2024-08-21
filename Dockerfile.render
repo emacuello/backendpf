@@ -18,6 +18,7 @@ RUN apt-get update && \
     rm -rf /var/lib/apt/lists/*
 
 COPY youdrive-api.conf /etc/nginx/conf.d/youdrive.conf
+COPY youdrive-api-s.conf /etc/nginx/conf.d/youdriveapi.conf
 
 WORKDIR /app
 
@@ -28,5 +29,8 @@ COPY --from=builder /app/dist ./dist
 COPY --from=builder /app/node_modules ./node_modules
 
 EXPOSE 80
+EXPOSE 443
+EXPOSE 3001
+EXPOSE 3002
 
 CMD ["sh", "-c", "npm run start:prod & nginx -g 'daemon off;'"]
