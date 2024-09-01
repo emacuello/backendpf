@@ -2,7 +2,7 @@
 
 cd /home/ubuntu/backendpf
 
-DUCKDNS_DOMAIN="youdrive-api.duckdns.org"
+DUCKDNS_DOMAIN="api-youdrive.duckdns.org"
 
 if [ -f "/home/ubuntu/backendpf/duckdns.env" ]; then
   export $(grep -v '^#' /home/ubuntu/backendpf/duckdns.env | xargs)
