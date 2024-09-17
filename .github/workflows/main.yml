@@ -31,7 +31,9 @@ jobs:
           context: .
           file: ./Dockerfile.render
           push: true
-          tags: ${{ secrets.DOCKERHUB_USERNAME }}/youdrive-api:latest
+          tags: |
+            ${{ secrets.DOCKERHUB_USERNAME }}/youdrive-api:latest
+            ${{ secrets.DOCKERHUB_USERNAME }}/youdrive-api:${{ github.sha }}
       - name: Deploy to Render
         uses: fjogeleit/http-request-action@v1
         with:

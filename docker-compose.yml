@@ -14,12 +14,12 @@ services:
 
   youdrive-api:
     image: emacuello/youdrive:latest
+    restart: unless-stopped
     ports:
       - 3001:3001
       - 3002:3002
     networks:
       - youdrive
-    restart: always
     env_file:
       - ./.env.development
 

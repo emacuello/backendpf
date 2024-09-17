@@ -16,7 +16,7 @@ const configDatabase = {
   // logging: true,
   // dropSchema: true,
   migrations: ['dist/migrations/*.{ts,js}'],
-  // ssl: true,
+  ssl: true,
 };
 
 export default registerAs('database', () => configDatabase);
