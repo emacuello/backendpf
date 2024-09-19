@@ -32,10 +32,16 @@ jobs:
           file: ./Dockerfile.render
           push: true
           tags: |
-            ${{ secrets.DOCKERHUB_USERNAME }}/youdrive-api:latest
-            ${{ secrets.DOCKERHUB_USERNAME }}/youdrive-api:${{ github.sha }}
-      - name: Deploy to Render
-        uses: fjogeleit/http-request-action@v1
+            ${{ secrets.DOCKERHUB_USERNAME }}/${{ secrets.COMPOSE_SERVICE }}:latest
+            ${{ secrets.DOCKERHUB_USERNAME }}/${{ secrets.COMPOSE_SERVICE }}:${{ github.sha }}
+      - name: Deploy to AWS EC2
+        uses: appleboy/ssh-action@v1.0.3
         with:
-          url: ${{ secrets.RENDER_DEPLOY_HOOK }}
-          method: 'GET'
+          host: ${{ secrets.AWS_HOST }}
+          username: ${{ secrets.AWS_USERNAME }}
+          key: ${{ secrets.AWS_KEY }}
+          script: |
+            cd ${{ secrets.AWS_DIR }}
+            docker-compose down ${{ secrets.COMPOSE_SERVICE }}
+            docker pull ${{ secrets.DOCKERHUB_USERNAME }}/youdrive:latest
+            docker-compose up -d ${{ secrets.COMPOSE_SERVICE }}

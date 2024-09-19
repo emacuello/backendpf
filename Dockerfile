@@ -10,7 +10,7 @@ COPY . .
 
 RUN npm run build
 
-FROM node:20.12.2-buster-slim AS runner
+FROM node:18-alpine AS runner
 
 WORKDIR /app
 
