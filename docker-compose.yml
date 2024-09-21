@@ -55,8 +55,34 @@ services:
     networks:
       - youdrive
 
+  cadvisor:
+    image: gcr.io/cadvisor/cadvisor
+    volumes:
+        - "/:/rootfs:ro"
+        - "/var/run:/var/run:ro"
+        - "/sys:/sys:ro"
+        - "/var/lib/docker/:/var/lib/docker:ro"
+        - "/dev/disk/:/dev/disk:ro"
+    ports:
+        - "8080:8080"
+    networks:
+      - youdrive
+
+  prometheus:
+    image: prom/prometheus:latest
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+      - prometheus_data:/prometheus
+    depends_on:
+      - youdrive-api
+    networks:
+      - youdrive
+    ports:
+      - "9090:9090"
+
 networks:
   youdrive:
     driver: bridge
 volumes:
   grafana_data:
+  prometheus_data:
