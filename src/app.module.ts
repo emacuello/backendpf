@@ -18,6 +18,7 @@ import { ChatModule } from './chat/chat.module';
 import { searchModule } from './search/search.module';
 import { ProfanityFilterService } from './profinafy.service';
 import { ProfanityValidator } from './posts/decorators/wordValidator.decorator';
+import { PrometheusCustomModule } from './metrics/metrics.module';
 
 @Module({
   imports: [
@@ -37,6 +38,7 @@ import { ProfanityValidator } from './posts/decorators/wordValidator.decorator';
     PassportModule.register({ session: true }),
     ChatModule,
     searchModule,
+    PrometheusCustomModule,
   ],
   controllers: [],
   providers: [ProfanityFilterService, ProfanityValidator],
